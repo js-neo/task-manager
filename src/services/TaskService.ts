@@ -6,12 +6,11 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
-
 const tasksPath = join(__dirname, '../../tasks.json');
 
 class TaskService {
     private static instance: TaskService;
-    private readonly tasks: Task[] = [];
+    private tasks: Task[] = [];
 
     public static getInstance(): TaskService {
         if (!this.instance) {
@@ -21,6 +20,10 @@ class TaskService {
     }
 
     private constructor() {
+        this.loadTasks();
+    }
+
+    private loadTasks(): void {
         try {
             const data = readFileSync(tasksPath, 'utf8');
             this.tasks = JSON.parse(data).map((task: any) => new Task(task.id, task.title, task.status));
@@ -83,7 +86,7 @@ class TaskService {
         }
     }
 
-    saveTasks(): void {
+    private saveTasks(): void {
         const jsonData = JSON.stringify(this.tasks, null, 2);
         writeFileSync(tasksPath, jsonData, 'utf8');
     }
